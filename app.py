@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from flask import Flask, Response, abort, request, send_from_directory
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = Path(__file__).resolve().parent
 STATIC_ROOT = PROJECT_ROOT / "static"
 
 load_dotenv(PROJECT_ROOT / ".env")
