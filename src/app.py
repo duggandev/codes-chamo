@@ -1,5 +1,6 @@
 import os
 import re
+from pathlib import Path
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
 import requests
@@ -7,7 +8,10 @@ from dotenv import load_dotenv
 from flask import Flask, Response, abort, request, send_from_directory
 
 
-load_dotenv()
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+STATIC_ROOT = PROJECT_ROOT / "static"
+
+load_dotenv(PROJECT_ROOT / ".env")
 
 TARGET_URL = (os.getenv("web") or os.getenv("WEB") or "").strip().rstrip("/")
 if not TARGET_URL:
@@ -167,7 +171,7 @@ def request_headers() -> dict[str, str]:
 @app.get("/favicon.ico")
 def favicon():
     return send_from_directory(
-        app.root_path,
+        STATIC_ROOT,
         "favicon.ico",
         mimetype="image/vnd.microsoft.icon",
         max_age=86400,
@@ -177,7 +181,7 @@ def favicon():
 @app.get("/mobile-theme.css")
 def mobile_theme():
     return send_from_directory(
-        app.root_path,
+        STATIC_ROOT / "css",
         "mobile-theme.css",
         mimetype="text/css",
         max_age=3600,
@@ -187,7 +191,7 @@ def mobile_theme():
 @app.get("/mobile-app.js")
 def mobile_app_script():
     return send_from_directory(
-        app.root_path,
+        STATIC_ROOT / "js",
         "mobile-app.js",
         mimetype="application/javascript",
         max_age=3600,

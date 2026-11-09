@@ -43,4 +43,6 @@ png += png_chunk(b"IEND", b"")
 # Los navegadores modernos admiten un PNG encapsulado dentro de ICO.
 header = struct.pack("<HHH", 0, 1, 1)
 entry = struct.pack("<BBBBHHII", SIZE, SIZE, 0, 0, 1, 32, len(png), 22)
-Path(__file__).with_name("favicon.ico").write_bytes(header + entry + png)
+output_path = Path(__file__).resolve().parents[1] / "static" / "favicon.ico"
+output_path.parent.mkdir(parents=True, exist_ok=True)
+output_path.write_bytes(header + entry + png)
