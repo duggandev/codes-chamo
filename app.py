@@ -1,5 +1,6 @@
 import os
 import re
+from html import escape
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit, urlunsplit
 
@@ -117,6 +118,25 @@ def rewrite_body(body: bytes, content_type: str) -> bytes:
     text = re.sub(r"<base\b[^>]*>", "", text, flags=re.I)
 
     if "text/html" in content_type.lower():
+        # El titulo de la pestaña siempre usa el nombre configurado del negocio.
+        business_title = escape(BUSINESS_NAME, quote=False)
+        if re.search(r"<title\b", text, flags=re.I):
+            text = re.sub(
+                r"<title\b[^>]*>.*?</title\s*>",
+                f"<title>{business_title}</title>",
+                text,
+                count=1,
+                flags=re.I | re.S,
+            )
+        else:
+            text = re.sub(
+                r"<head\b[^>]*>",
+                lambda match: match.group(0) + f"\n<title>{business_title}</title>",
+                text,
+                count=1,
+                flags=re.I,
+            )
+
         # Usa siempre el favicon local, aunque el sitio remoto declare otro.
         text = re.sub(
             r'<link\b(?=[^>]*\brel=["\'][^"\']*(?:icon|shortcut icon)[^"\']*["\'])[^>]*>',
